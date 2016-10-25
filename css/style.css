@@ -73,7 +73,7 @@ a:hover {
 }
 @media screen and (max-width: 1260px) {
   .inner {
-    width: 100%;
+    width: auto;
   }
 }
 #main-col {
