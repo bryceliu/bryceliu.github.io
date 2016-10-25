@@ -24,20 +24,21 @@
   <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
   
 
+  <script src="/js/jquery.min.js"></script>
 </head>
 
 
 <body>
   <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Bryce&#39;s Note</a></h1>
-  <h2><a href="/">根据你的物质与心灵条件，去思考你的处境，挖掘你的潜能，选择你的行动，享受你的快乐。</a></h2>
+  <h2 style="line-height:1.6em"><a href="/">根据你的物质与心灵条件，去思考你的处境，挖掘你的潜能，选择你的行动，享受你的快乐。</a></h2>
 </div>
 <nav id="main-nav" class="alignright">
   <ul>
     
-      <li><a href="/">Home</a></li>
+      <li><a href="/">首页</a></li>
     
-      <li><a href="/archives">Archives</a></li>
+      <li><a href="/archives">归档</a></li>
     
   </ul>
   <div class="clearfix"></div>
@@ -93,17 +94,6 @@
   </div>
 
         
-  <div class="addthis addthis_toolbox addthis_default_style">
-    
-    
-    
-    
-      <a class="addthis_button_pinterest_pinit" pi:pinit:layout="horizontal"></a>
-    
-    <a class="addthis_counter addthis_pill_style"></a>
-  </div>
-  <script type="text/javascript" src="//s7.addthis.com/js/300/addthis_widget.js"></script>
-
       
       <div class="clearfix"></div>
     </footer>
@@ -115,30 +105,25 @@
   <h1 class="title">留言</h1>
 
   
-      <div id="fb-root"></div>
-<script>
-  (function(d, s, id) {
-    var js, fjs = d.getElementsByTagName(s)[0];
-    if (d.getElementById(id)) return;
-    js = d.createElement(s); js.id = id;
-    js.src = "//connect.facebook.net/en_US/all.js#xfbml=1&appId=123456789012345";
-    fjs.parentNode.insertBefore(js, fjs);
-  }(document, 'script', 'facebook-jssdk'));
-</script>
-
-<div class="fb-comments" data-href="http://bryceliu.github.io/2016/09/19/split-string-by-char/index.html" data-num-posts="5" data-width="840" data-colorscheme="light"></div>
-      
-  
 </section>
 
 </div></div>
     <aside id="sidebar" class="alignright">
   <div class="search">
-  <form action="//google.com/search" method="get" accept-charset="utf-8">
-    <input type="search" name="q" results="0" placeholder="搜索">
-    <input type="hidden" name="q" value="site:bryceliu.github.io">
+  <form id="J_search" action="//www.baidu.com/s" method="get" accept-charset="utf-8">
+    <input type="search" name="wd" results="0" placeholder="搜索">
+    <input type="hidden" name="si" value="bryceliu.github.io">
   </form>
 </div>
+<script>
+  $("#J_search").submit(function () {
+    location.href = "https://www.baidu.com/s?wd=" + encodeURIComponent(
+      $("input[name=wd]").val() + " site:" + $("input[name=si]").val()
+    );
+    return false;
+  });
+</script>
+
 
   
 
@@ -167,8 +152,7 @@
   
 </div>
 <div class="clearfix"></div></footer>
-  <script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
-<script src="/js/jquery.imagesloaded.min.js"></script>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
 <script src="/js/gallery.js"></script>
 
 
@@ -181,6 +165,7 @@
   $('.fancybox').fancybox();
 })(jQuery);
 </script>
+
 
 </body>
 </html>

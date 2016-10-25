@@ -18,7 +18,7 @@ body {
 }
 @media screen and (max-width: 1260px) {
   body {
-    margin: 0 30px;
+    margin: 0 0;
   }
 }
 @media screen and (max-width: 600px) {
@@ -103,7 +103,8 @@ a:hover {
 }
 #header {
   text-shadow: 0 0 1px #fff;
-  margin: 50px auto;
+  margin: 0 auto;
+  padding: 20px;
 }
 #header a {
   color: #999;
