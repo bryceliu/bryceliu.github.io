@@ -31,7 +31,7 @@
 <body>
   <header id="header" class="inner"><div class="alignleft">
   <h1><a href="/">Bryce&#39;s Note</a></h1>
-  <h2 style="line-height:1.6em"><a href="/">根据你的物质与心灵条件，去思考你的处境，挖掘你的潜能，选择你的行动，享受你的快乐。</a></h2>
+  <h2 style="line-height:1.6em"><a href="/">The best or nothing.</a></h2>
 </div>
 <nav id="main-nav" class="alignright">
   <ul>
@@ -52,7 +52,7 @@
     <header>
       
         <div class="icon"></div>
-        <time datetime="2016-09-19T17:56:07.000Z"><a href="/2016/09/19/split-string-by-char/">2016-09-19</a></time>
+        <time datetime="2016-09-19T17:56:07.000Z"><a href="/2016/09/20/split-string-by-char/">2016-09-20</a></time>
       
       
   
@@ -63,8 +63,8 @@
     <div class="entry">
       
         <p>对比一下分别用CPP和PHP实现分割字符串。</p>
-<a id="more"></a>
 <h2 id="CPP实现分割字符串"><a href="#CPP实现分割字符串" class="headerlink" title="CPP实现分割字符串"></a>CPP实现分割字符串</h2><p>思路是将字符串转换成字符流，然后借助<code>std::getline</code>的第三个参数进行分割。完整代码如下：</p>
+<a id="more"></a>
 <figure class="highlight cpp"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;iostream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;string&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;sstream&gt;</span></span></div><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">&lt;vector&gt;</span></span></div><div class="line"></div><div class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; &amp;split(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;s, <span class="keyword">char</span> delim,</div><div class="line">        <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; &amp;elems) &#123;</div><div class="line">    <span class="built_in">std</span>::<span class="function"><span class="built_in">stringstream</span> <span class="title">ss</span><span class="params">(s)</span></span>;</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">string</span> item;</div><div class="line">    <span class="keyword">while</span> (<span class="built_in">std</span>::getline(ss, item, delim)) &#123;</div><div class="line">        elems.push_back(item);</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> elems;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; split(<span class="keyword">const</span> <span class="built_in">std</span>::<span class="built_in">string</span> &amp;s, <span class="keyword">char</span> delim) &#123;</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; elems;</div><div class="line">    split(s, delim, elems);</div><div class="line">    <span class="keyword">return</span> elems;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">int</span> <span class="title">main</span><span class="params">(<span class="keyword">int</span> argc, <span class="keyword">const</span> <span class="keyword">char</span> *argv[])</span></span></div><div class="line">&#123;</div><div class="line">    <span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt; parts = split(<span class="string">"1,2,3,4"</span>, <span class="string">','</span>);</div><div class="line">    <span class="keyword">for</span> (<span class="built_in">std</span>::<span class="built_in">vector</span>&lt;<span class="built_in">std</span>::<span class="built_in">string</span>&gt;::iterator i = parts.begin();</div><div class="line">            i != parts.end(); ++i) &#123;</div><div class="line">        <span class="built_in">std</span>::<span class="built_in">cout</span> &lt;&lt; *i &lt;&lt; <span class="built_in">std</span>::<span class="built_in">endl</span>;</div><div class="line">    &#125;</div><div class="line">    <span class="keyword">return</span> <span class="number">0</span>;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
 <p>注意，由于<code>std::getline</code>第三个参数是<code>char</code>，因此这个实现支持的分割符只能是一个字符。</p>
 <h2 id="PHP实现分割字符串"><a href="#PHP实现分割字符串" class="headerlink" title="PHP实现分割字符串"></a>PHP实现分割字符串</h2><p>接触过PHP的同学都知道，PHP中有一个函数<code>explode</code>可以用来分割字符串，它的分割符可以是任意长度字符串（如果是空字符串，则函数返回<code>false</code>，注意PHP本身没有字符类型），而且还支持用第三个参数<code>limit</code>（可选）限制分割数量，如果<code>limit</code>为正，则分割数量不超过<code>limit</code>，如果<code>limit</code>为负，则返回除最后<code>-limit</code>外的其他部分，如下：</p>
@@ -106,7 +106,7 @@
   <h1 class="title">留言</h1>
 
   
-      <div class="ds-thread" data-thread-key="2016/09/19/split-string-by-char/" data-title="用字符分割字符串" data-url="/2016/09/19/split-string-by-char/"></div>
+      <div class="ds-thread" data-thread-key="2016/09/20/split-string-by-char/" data-title="用字符分割字符串" data-url="/2016/09/20/split-string-by-char/"></div>
 <script type="text/javascript">
   var duoshuoQuery = {short_name: "bryceliu"};
   (function() {
@@ -164,7 +164,7 @@
   </div>
   <footer id="footer" class="inner"><div class="alignleft">
   
-  &copy; 2016 Bryce
+  &copy; 2017 Bryce
   
 </div>
 <div class="clearfix"></div></footer>
