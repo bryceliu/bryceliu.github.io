@@ -65,7 +65,7 @@
         <h4 id="Debian-8下编译安装php-7-1-7，支持phpdbg、phpdbg-webhelper"><a href="#Debian-8下编译安装php-7-1-7，支持phpdbg、phpdbg-webhelper" class="headerlink" title="Debian 8下编译安装php-7.1.7，支持phpdbg、phpdbg-webhelper"></a>Debian 8下编译安装php-7.1.7，支持phpdbg、phpdbg-webhelper</h4><ul>
 <li>安装依赖</li>
 </ul>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">apt-get install libbz2-dev libcurl4-openssl-dev libjpeg-dev \</div><div class="line">    libpng12-dev libldap2-dev libsasl2-dev libmcrypt-dev freetds-dev</div><div class="line"></div><div class="line">rsync /usr/lib/x86_64-linux-gnu/*ldap* /usr/lib/</div><div class="line">rsync /usr/lib/x86_64-linux-gnu/*sybdb* /usr/lib/</div></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">apt-get install libbz2-dev libcurl4-openssl-dev libjpeg-dev \</div><div class="line">    libpng12-dev libldap2-dev libsasl2-dev libmcrypt-dev freetds-dev</div><div class="line"></div><div class="line">rsync -av /usr/lib/x86_64-linux-gnu/*ldap* /usr/lib/</div><div class="line">rsync -av /usr/lib/x86_64-linux-gnu/*sybdb* /usr/lib/</div></pre></td></tr></table></figure>
 <a id="more"></a>
 <ul>
 <li>编译安装</li>
