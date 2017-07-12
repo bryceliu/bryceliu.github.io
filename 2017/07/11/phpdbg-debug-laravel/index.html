@@ -1,0 +1,158 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>使用phpdbg调试laravel5.4 | Bryce&#39;s Note</title>
+  <meta name="author" content="Bryce">
+  
+  <meta name="description" content="记录发生的一切。">
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+  <meta property="og:title" content="使用phpdbg调试laravel5.4"/>
+  <meta property="og:site_name" content="Bryce&#39;s Note"/>
+
+  
+    <meta property="og:image" content="undefined"/>
+  
+
+  <link href="/favicon.png" rel="icon">
+  <link rel="alternate" href="/atom.xml" title="Bryce&#39;s Note" type="application/atom+xml">
+  <link rel="stylesheet" href="/css/style.css" media="screen" type="text/css">
+  <!--[if lt IE 9]><script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script><![endif]-->
+  
+
+  <script src="/js/jquery.min.js"></script>
+</head>
+
+
+<body>
+  <header id="header" class="inner"><div class="alignleft">
+  <h1><a href="/">Bryce&#39;s Note</a></h1>
+  <h2 style="line-height:1.6em"><a href="/">The best or nothing.</a></h2>
+</div>
+<nav id="main-nav" class="alignright">
+  <ul>
+    
+      <li><a href="/">首页</a></li>
+    
+      <li><a href="/archives">归档</a></li>
+    
+  </ul>
+  <div class="clearfix"></div>
+</nav>
+<div class="clearfix"></div>
+</header>
+  <div id="content" class="inner">
+    <div id="main-col" class="alignleft"><div id="wrapper"><article class="post">
+  
+  <div class="post-content">
+    <header>
+      
+        <div class="icon"></div>
+        <time datetime="2017-07-11T13:49:34.000Z"><a href="/2017/07/11/phpdbg-debug-laravel/">2017-07-11</a></time>
+      
+      
+  
+    <h1 class="title">使用phpdbg调试laravel5.4</h1>
+  
+
+    </header>
+    <div class="entry">
+      
+        <p>正如用gdb调试c/c++应用一样，我们可以用phpdbg来调试php应用。</p>
+<h2 id="自动生成初始化脚本"><a href="#自动生成初始化脚本" class="headerlink" title="自动生成初始化脚本"></a>自动生成初始化脚本</h2><p>web应用通常运行在fpm-fcgi环境下，而phpdbg作为一个独立的sapi执行，不能直接获取到web应用独有的全局变量（比如$_COOKIE），此时需要fpm-fcgi在请求到达时将这些全局变量传递给phpdbg，这就涉及到进程间通信。官方给出两种方案：一种是手动写一个全局变量初始化脚步，通过.phpdbginit引入，这种方式每次请求都要去手动写一下初始化脚步，比较麻烦；另一种方式是，在phpdbg执行wait命令时，建立一个服务端，同时在fpm-fcgi环境下，通过一个请求初始化阶段的hook，将全局变量通过unix domain socket传递给phpdbg，目前这种方式不成熟，官方文档没有正式给出说明。</p>
+<a id="more"></a>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div></pre></td><td class="code"><pre><div class="line"><span class="meta">#<span class="meta-keyword">include</span> <span class="meta-string">"zend_smart_str.h"</span></span></div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="keyword">int</span> <span class="title">phpdbg_is_auto_global</span><span class="params">(<span class="keyword">char</span> *name, <span class="keyword">int</span> len)</span> </span>&#123;</div><div class="line">    <span class="keyword">int</span> ret;</div><div class="line">    zend_string *str = zend_string_init(name, len, <span class="number">0</span>);</div><div class="line">    ret = zend_is_auto_global(str);</div><div class="line">    zend_string_free(str);</div><div class="line">    <span class="keyword">return</span> ret;</div><div class="line">&#125;</div><div class="line"></div><div class="line"><span class="function"><span class="keyword">static</span> <span class="title">PHP_RINIT_FUNCTION</span><span class="params">(phpdbg_webhelper)</span> <span class="comment">/* &#123;&#123;&#123; */</span></span></div><div class="line">&#123;</div><div class="line">	<span class="comment">// ...</span></div><div class="line"></div><div class="line">    <span class="keyword">if</span> (<span class="built_in">strcmp</span>(sapi_module.name, <span class="string">"fpm-fcgi"</span>)) &#123;</div><div class="line">        <span class="keyword">return</span> SUCCESS;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    zval globals;</div><div class="line">    zval *server, *script, *root;</div><div class="line">    smart_str buf = &#123;<span class="number">0</span>&#125;, path = &#123;<span class="number">0</span>&#125;;</div><div class="line">    php_stream *stream;</div><div class="line">    <span class="keyword">size_t</span> numbytes = <span class="number">0</span>;</div><div class="line"></div><div class="line">    array_init(&amp;globals);</div><div class="line">    phpdbg_is_auto_global(ZEND_STRL(<span class="string">"GLOBALS"</span>));</div><div class="line">    phpdbg_is_auto_global(ZEND_STRL(<span class="string">"_ENV"</span>));</div><div class="line">    phpdbg_is_auto_global(ZEND_STRL(<span class="string">"_SERVER"</span>));</div><div class="line">    phpdbg_is_auto_global(ZEND_STRL(<span class="string">"_REQUEST"</span>));</div><div class="line">    zend_hash_copy(Z_ARRVAL(globals), &amp;EG(symbol_table), <span class="literal">NULL</span>);</div><div class="line">    Z_ARRVAL(globals)-&gt;pDestructor = <span class="literal">NULL</span>;</div><div class="line">    zend_hash_str_del(Z_ARRVAL(globals), ZEND_STRL(<span class="string">"GLOBALS"</span>));</div><div class="line"></div><div class="line">	<span class="keyword">if</span> ((server = zend_hash_str_find(Z_ARRVAL(globals), ZEND_STRL(<span class="string">"_SERVER"</span>))) &amp;&amp; Z_TYPE_P(server) == IS_ARRAY) &#123;</div><div class="line">        <span class="keyword">if</span> ((script = zend_hash_str_find(Z_ARRVAL_P(server), ZEND_STRL(<span class="string">"SCRIPT_FILENAME"</span>))) &amp;&amp; Z_TYPE_P(script) == IS_STRING</div><div class="line">                &amp;&amp; (root = zend_hash_str_find(Z_ARRVAL_P(server), ZEND_STRL(<span class="string">"DOCUMENT_ROOT"</span>))) &amp;&amp; Z_TYPE_P(root) == IS_STRING) &#123;</div><div class="line">            smart_str_appends(&amp;path, Z_STRVAL_P(root));</div><div class="line">            smart_str_appends(&amp;path, <span class="string">"/.phpdbginit"</span>);</div><div class="line">            smart_str_0(&amp;path);</div><div class="line">            stream = php_stream_open_wrapper(ZSTR_VAL(path.s), <span class="string">"cb"</span>, <span class="number">0</span> | REPORT_ERRORS, <span class="literal">NULL</span>);</div><div class="line">            php_stream_truncate_set_size(stream, <span class="number">0</span>);</div><div class="line">            php_stream_write_string(stream, <span class="string">"exec "</span>);</div><div class="line">            php_stream_write_string(stream, Z_STRVAL_P(script));</div><div class="line">            php_stream_write_string(stream, <span class="string">"\n\n&lt;:\n$globals = "</span>);</div><div class="line">            php_var_export_ex(&amp;globals, <span class="number">1</span>, &amp;buf);</div><div class="line">            smart_str_0(&amp;buf);</div><div class="line">            numbytes = php_stream_write(stream, ZSTR_VAL(buf.s), ZSTR_LEN(buf.s));</div><div class="line">            php_stream_write_string(stream, <span class="string">"; foreach ($globals as $key =&gt; $value) &#123; $$key = $value; &#125;\n:&gt;\n"</span>);</div><div class="line">            php_stream_close(stream);</div><div class="line">            smart_str_free(&amp;path);</div><div class="line">            smart_str_free(&amp;buf);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    <span class="keyword">return</span> SUCCESS;</div><div class="line">&#125; <span class="comment">/* &#125;&#125;&#125; */</span></div></pre></td></tr></table></figure>
+
+      
+    </div>
+    <footer>
+      
+        
+        
+  
+  <div class="tags">
+    <a href="/tags/phpdbg/">phpdbg</a>, <a href="/tags/laravel5-4/">laravel5.4</a>
+  </div>
+
+        
+      
+      <div class="clearfix"></div>
+    </footer>
+  </div>
+</article>
+</div></div>
+    <aside id="sidebar" class="alignright">
+  <div class="search">
+  <form id="J_search" action="//www.baidu.com/s" method="get" accept-charset="utf-8">
+    <input type="search" name="wd" results="0" placeholder="搜索">
+    <input type="hidden" name="si" value="bryceliu.github.io">
+  </form>
+</div>
+<script>
+  $("#J_search").submit(function () {
+    location.href = "https://www.baidu.com/s?wd=" + encodeURIComponent(
+      $("input[name=wd]").val() + " site:" + $("input[name=si]").val()
+    );
+    return false;
+  });
+</script>
+
+
+  
+
+  
+<div class="widget tag">
+  <h3 class="title">标签</h3>
+  <ul class="entry">
+  
+    <li><a href="/tags/Sunday算法/">Sunday算法</a><small>1</small></li>
+  
+    <li><a href="/tags/cpp/">cpp</a><small>1</small></li>
+  
+    <li><a href="/tags/git/">git</a><small>1</small></li>
+  
+    <li><a href="/tags/laravel5-4/">laravel5.4</a><small>1</small></li>
+  
+    <li><a href="/tags/php/">php</a><small>1</small></li>
+  
+    <li><a href="/tags/php7/">php7</a><small>1</small></li>
+  
+    <li><a href="/tags/phpdbg/">phpdbg</a><small>2</small></li>
+  
+    <li><a href="/tags/字符串查找/">字符串查找</a><small>1</small></li>
+  
+    <li><a href="/tags/补丁/">补丁</a><small>1</small></li>
+  
+  </ul>
+</div>
+
+</aside>
+    <div class="clearfix"></div>
+  </div>
+  <footer id="footer" class="inner"><div class="alignleft">
+  
+  &copy; 2017 Bryce
+  
+</div>
+<div class="clearfix"></div></footer>
+  <script src="/js/jquery.imagesloaded.min.js"></script>
+<script src="/js/gallery.js"></script>
+
+
+
+
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css" media="screen" type="text/css">
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script type="text/javascript">
+(function($){
+  $('.fancybox').fancybox();
+})(jQuery);
+</script>
+
+
+</body>
+</html>
